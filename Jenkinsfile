@@ -25,7 +25,7 @@ spec:
       privileged: true
   - name: kubectl
     image: lachlanevenson/k8s-helm:v2.16.1
-	tty: true
+    tty: true
     command:
       - "cat" 
   - name: helm
