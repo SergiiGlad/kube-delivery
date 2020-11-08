@@ -92,9 +92,6 @@ spec:
     		}
 		  }
 		}
-
-
-		}
 	}// node
 } //podTemplate
 
