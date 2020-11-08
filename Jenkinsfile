@@ -87,7 +87,7 @@ spec:
 
 		stage ('Helm deploy') {
 			container('helm') {
-				withKubeConfig([credentialsId: 'kubeconfig']) {
+				withKubeConfig([credentialsId: 'kubeconfig', url: 'https://34.67.92.12']) {
     				 sh 'helm ls'
     		}
 		  }
