@@ -60,13 +60,6 @@ spec:
 			}
 		}
 
-		if ( isPullRequest() ) {
-			// exitAsSuccess()
-			echo "It's pull request and we don't push image to docker hub"
-			currentBuild.result = 'SUCCESS';
-			return 0
-		}
-
 		stage ('Docker push') {
 			container('docker-dind') {
 				sh 'docker image ls'
