@@ -36,54 +36,54 @@ spec:
 """){
 	node(podLabel) {
 
-		stage('Checkout application SCM') {
-			checkout scm
-		}
+		// stage('Checkout application SCM') {
+		// 	checkout scm
+		// }
 
-		stage('Build  Golang app') {
-			container('golang') {
-				echo "Build Golang app"
-				sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
-			}
-		}
+		// stage('Build  Golang app') {
+		// 	container('golang') {
+		// 		echo "Build Golang app"
+		// 		sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
+		// 	}
+		// }
 
-		stage ('Unit test Golang app')  {
-			container('golang') {
-				echo "Unit test Golang app"
-				sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
-			}
-		}
+		// stage ('Unit test Golang app')  {
+		// 	container('golang') {
+		// 		echo "Unit test Golang app"
+		// 		sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
+		// 	}
+		// }
 
-		// BRANCH_NAME = master  - push to master
-		// BRANCH_NAME = PR-1    - pull request
-		// BRANCH_NAME = develop - push to other branch
-		// BRANCH_NAME = 0.0.1  - git tag
-		def dockerTag = env.BRANCH_NAME
+		// // BRANCH_NAME = master  - push to master
+		// // BRANCH_NAME = PR-1    - pull request
+		// // BRANCH_NAME = develop - push to other branch
+		// // BRANCH_NAME = 0.0.1  - git tag
+		// def dockerTag = env.BRANCH_NAME
 
-		if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
+		// if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
 
 
-		stage('Docker build') {
-			container('docker-dind') {
-				sh "docker build . -t $dockerImage:$dockerTag"
-			}
-		}
+		// stage('Docker build') {
+		// 	container('docker-dind') {
+		// 		sh "docker build . -t $dockerImage:$dockerTag"
+		// 	}
+		// }
 
-		if ( isPullRequest() ) {
-			// exitAsSuccess()
-			echo "It's pull request and we don't push image to docker hub"
-			currentBuild.result = 'SUCCESS';
-			return 0
-		}
+		// if ( isPullRequest() ) {
+		// 	// exitAsSuccess()
+		// 	echo "It's pull request and we don't push image to docker hub"
+		// 	currentBuild.result = 'SUCCESS';
+		// 	return 0
+		// }
 
-		stage ('Docker push') {
-			container('docker-dind') {
-				sh 'docker image ls'
-				withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-					sh "docker push $dockerImage:$dockerTag"
-				}
-		  }
-		}
+		// stage ('Docker push') {
+		// 	container('docker-dind') {
+		// 		sh 'docker image ls'
+		// 		withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+		// 			sh "docker push $dockerImage:$dockerTag"
+		// 		}
+		//   }
+		// }
 
 		stage ('Service delivery') {
 			container('kubectl') {
