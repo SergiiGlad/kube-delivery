@@ -54,17 +54,9 @@ spec:
 			}
 		}
 
-		// BRANCH_NAME = master  - push to master
-		// BRANCH_NAME = PR-1    - pull request
-		// BRANCH_NAME = develop - push to other branch
-		// BRANCH_NAME = 0.0.1  - git tag
-		def dockerTag = env.BRANCH_NAME
-
-	    if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
-
 	    stage('Docker build') {
 			container('docker-dind') {
-				sh "docker build . -t $dockerImage:$dockerTag"
+				sh "docker build . -t ${dockerImage}:latest"
 			}
 		}
 
@@ -79,7 +71,7 @@ spec:
 			container('docker-dind') {
 				sh 'docker image ls'
 				withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-					sh "docker push $dockerImage:$dockerTag"
+					sh "docker push ${dockerImage}:latest"
 				}
 		  }
 		}
@@ -88,7 +80,7 @@ spec:
 			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
-					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":$dockerImage:$dockerTag"}]' -n default
+					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":${dockerImage}:latest"}]' -n default
 					 '''  
     		}
 		  }
@@ -96,14 +88,3 @@ spec:
 	}// node
 } //podTemplate
 
-def isMaster() {
-  return (env.BRANCH_NAME  == "master")
-}
-
-def isPullRequest() {
-  return (env.BRANCH_NAME ==~  /^PR-\d+$/)
-}
-
-def isBuildingTag() {
-  return ( env.BRANCH_NAME ==~ /^\d+\.\d+\.\d+$/ )
-}
