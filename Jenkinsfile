@@ -85,10 +85,15 @@ spec:
 		//   }
 		// }
 
-		stage ('Helm deploy') {
-			container('helm') {
+		stage ('Service delivery') {
+			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
-    				 sh 'helm ls'
+    				 sh '''
+					   kubectl run wiki --name=wiki:main --replicas=3 
+					   kubectl expose deploy/wiki --name=service-goapp -port=3000 --target-port=3000 --type=LoadBalancer
+					   kubectl get svc
+					 '''  
+
     		}
 		  }
 		}
