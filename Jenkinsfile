@@ -60,13 +60,9 @@ spec:
 		// BRANCH_NAME = 0.0.1  - git tag
 		def dockerTag = env.BRANCH_NAME
 
-		echo $dockerTag
+	    if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
 
-		if ( isMaster() ) dockerTag = sh(returnStdout: true, script: "git rev-parse HEAD").trim().take(7) //short commit
-
-		echo $dockerTag
-
-		stage('Docker build') {
+	    stage('Docker build') {
 			container('docker-dind') {
 				sh "docker build . -t $dockerImage:$dockerTag"
 			}
