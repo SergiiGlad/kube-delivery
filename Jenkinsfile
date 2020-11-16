@@ -89,7 +89,7 @@ spec:
 			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
-					   kubectl run wiki --image=wiki:main --r 3 
+					   kubectl run wiki --image=wiki:main -r 3 
 					   kubectl expose deploy/wiki --name=service-wiki --port=3000 --target-port=3000 --type=LoadBalancer
 					   kubectl get svc
 					 '''  
