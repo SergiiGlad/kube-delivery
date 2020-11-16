@@ -56,7 +56,7 @@ spec:
 
 	    stage('Docker build') {
 			container('docker-dind') {
-				sh "docker build . -t ${dockerImage}:latest"
+				sh "docker build ."
 			}
 		}
 
@@ -64,7 +64,7 @@ spec:
 			container('docker-dind') {
 				sh 'docker image ls'
 				withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-					sh "docker push ${dockerImage}:latest"
+					sh "docker push $dockerImage"
 				}
 		  }
 		}
@@ -73,7 +73,7 @@ spec:
 			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
-					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":${dockerImage}:latest"}]' -n default
+					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":$dockerImage"}]' -n default
 					 '''  
     		}
 		  }
