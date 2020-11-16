@@ -56,7 +56,7 @@ spec:
 
 	    stage('Docker build') {
 			container('docker-dind') {
-				sh "docker build ."
+				sh "docker build . -t $dockerImage$"
 			}
 		}
 
