@@ -73,7 +73,7 @@ spec:
 			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
-					   kubectl del deploy/wiki -n default
+					   kubectl delete deploy/wiki -n default
 					   kubectl run wiki --image=sergeyglad/wiki --replicas=3 --port=3000 --labels=app=simple --namespace=default
 
 					'''  
