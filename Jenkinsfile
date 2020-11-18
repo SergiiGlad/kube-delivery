@@ -71,7 +71,7 @@ spec:
 
 		stage ('Service delivery') {
 			container('kubectl') {
-				withKubeConfig([credentialsId: 'b9b6506b-1d71-490e-ae24-643115d4054b', serverUrl: 'https://34.67.92.12']) {
+				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
 					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":$dockerImage"}]' -n default
 					 '''  
