@@ -36,38 +36,38 @@ spec:
 """){
 	node(podLabel) {
 
-		stage('Checkout application SCM') {
-			checkout scm
-		}
+		// stage('Checkout application SCM') {
+		// 	checkout scm
+		// }
 
-		stage('Build  Golang app') {
-			container('golang') {
-				echo "Build Golang app"
-				sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
-			}
-		}
+		// stage('Build  Golang app') {
+		// 	container('golang') {
+		// 		echo "Build Golang app"
+		// 		sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags="-w -s" -o main .'
+		// 	}
+		// }
 
-		stage ('Unit test Golang app')  {
-			container('golang') {
-				echo "Unit test Golang app"
-				sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
-			}
-		}
+		// stage ('Unit test Golang app')  {
+		// 	container('golang') {
+		// 		echo "Unit test Golang app"
+		// 		sh 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go test -v .'
+		// 	}
+		// }
 
-	    stage('Docker build') {
-			container('docker-dind') {
-				sh "docker build . -t $dockerImage"
-			}
-		}
+	    // stage('Docker build') {
+		// 	container('docker-dind') {
+		// 		sh "docker build . -t $dockerImage"
+		// 	}
+		// }
 
-		stage ('Docker push') {
-			container('docker-dind') {
-				sh 'docker image ls'
-				withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
-					sh "docker push $dockerImage"
-				}
-		  }
-		}
+		// stage ('Docker push') {
+		// 	container('docker-dind') {
+		// 		sh 'docker image ls'
+		// 		withDockerRegistry([credentialsId: 'docker-api-key', url: 'https://index.docker.io/v1/']) {
+		// 			sh "docker push $dockerImage"
+		// 		}
+		//   }
+		// }
 
 		stage ('Service delivery') {
 			container('kubectl') {
