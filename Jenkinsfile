@@ -73,9 +73,10 @@ spec:
 			container('kubectl') {
 				withKubeConfig([credentialsId: 'kubeconfig', serverUrl: 'https://34.67.92.12']) {
     				 sh '''
-					   kubectl patch deploy/wiki --type='json' -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value":"sergeyglad/wiki"}]' -n default
-					   kubectl
-					 '''  
+					   kubectl del deploy/wiki -n default
+					   kubectl run wiki --image=sergeyglad/wiki --replicas=3 --port=3000 --labels=app=simple --namespace=default
+
+					'''  
     		}
 		  }
 		}
